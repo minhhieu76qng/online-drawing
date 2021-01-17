@@ -32,7 +32,5 @@
       }
     }
   },
-  "plugins": [
-    "only-warn"
-  ]
+  // "plugins": ["only-warn"]
 }

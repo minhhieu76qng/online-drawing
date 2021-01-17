@@ -1,13 +1,20 @@
 import loadableComponent from '@loadable/component';
+import pMinDelay from 'p-min-delay';
 import Loading from 'components/Loading';
 
 const fallback = <Loading />;
+const delay = 1000;
 
-const HomeComponent = loadableComponent(() => import('./screens/Home'), { fallback });
-const RoomsComponent = loadableComponent(() => import('./screens/Rooms'), { fallback });
-const PaintingBoardComponent = loadableComponent(() => import('./screens/PaintingBoard'), {
+const HomeComponent = loadableComponent(() => pMinDelay(import('./screens/Home'), delay), {
   fallback,
 });
+const RoomsComponent = loadableComponent(() => pMinDelay(import('./screens/Rooms'), delay), {
+  fallback,
+});
+const PaintingBoardComponent = loadableComponent(
+  () => pMinDelay(import('./screens/PaintingBoard'), delay),
+  { fallback },
+);
 
 export const routes = [
   {
