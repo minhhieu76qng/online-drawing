@@ -31,5 +31,8 @@
         "paths": ["src"]
       }
     }
-  }
+  },
+  "plugins": [
+    "only-warn"
+  ]
 }

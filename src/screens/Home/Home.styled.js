@@ -8,5 +8,5 @@ export const StyledHomeContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: url(${HomeBackground});
+  background-image: url(${HomeBackground});
 `;

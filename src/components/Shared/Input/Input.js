@@ -12,7 +12,6 @@ const defaultProps = {
 };
 
 function Input(props) {
-  console.log('🚀 ~ file: Input.js ~ line 13 ~ Input ~ props', props);
   return <StyledInput {...props} />;
 }
 
