@@ -1,10 +1,11 @@
-import Header from 'components/Header';
+import RegisterForm from 'components/RegisterForm';
+import { StyledHomeContainer } from './Home.styled';
 
 function Home() {
   return (
-    <div>
-      <Header />
-    </div>
+    <StyledHomeContainer>
+      <RegisterForm />
+    </StyledHomeContainer>
   );
 }
 

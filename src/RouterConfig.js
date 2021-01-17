@@ -1,6 +1,7 @@
 import loadableComponent from '@loadable/component';
+import Loading from 'components/Loading';
 
-const fallback = <div>loading...</div>;
+const fallback = <Loading />;
 
 const HomeComponent = loadableComponent(() => import('./screens/Home'), { fallback });
 const RoomsComponent = loadableComponent(() => import('./screens/Rooms'), { fallback });
