@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Header from 'components/Header';
+import { Colors } from 'constants/styles/Colors';
 import { Rectangle } from 'services/shapes/Rectangle';
 import { Canvas } from 'services/graphics/Canvas';
 import Shape from 'services/shapes/Shape';
 import { SHAPE_TYPE } from 'constants/shapes';
 import { StyledBoardContainer } from './PaintingBoard.styled';
+import { Point } from 'services/points/Point';
 
 const HEADER_HEIGHT = 50;
 
@@ -33,6 +35,7 @@ class PaintingBoard extends React.Component {
       },
       graphic: null,
       currentShapeType: SHAPE_TYPE.RECTANGLE,
+      currentShapeColor: Colors.PRIMARY,
     };
     this.canvasRef = null;
   }
@@ -43,44 +46,45 @@ class PaintingBoard extends React.Component {
       canvasCtx: ctx,
       graphic: new Canvas(ctx),
     });
-    window.addEventListener('mousedown', this.handleMouseDown);
-    window.addEventListener('mouseup', this.handleMouseUp);
-    window.addEventListener('mousemove', this.handleMouseMove);
+    this.canvasRef.addEventListener('mousedown', this.handleMouseDown);
+    this.canvasRef.addEventListener('mouseup', this.handleMouseUp);
+    this.canvasRef.addEventListener('mousemove', this.handleMouseMove);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('mousedown', this.handleMouseDown);
-    window.removeEventListener('mouseup', this.handleMouseUp);
-    window.removeEventListener('mousemove', this.handleMouseMove);
+    this.canvasRef.removeEventListener('mousedown', this.handleMouseDown);
+    this.canvasRef.removeEventListener('mouseup', this.handleMouseUp);
+    this.canvasRef.removeEventListener('mousemove', this.handleMouseMove);
   }
 
   handleMouseDown = (event) => {
-    const [x, y] = this.getMousePosition(event);
+    const { isValid, point } = this.getValidViewPort(event);
+    if (!isValid) return;
     this.setState({
       isDrawing: true,
       myPosition: {
-        start: {
-          x,
-          y,
-        },
+        start: point,
       },
     });
   };
 
   handleMouseUp = (event) => {
-    const [x, y] = this.getMousePosition(event);
     const { myPosition, graphic } = this.state;
+    const { isValid, point } = this.getValidViewPort(event);
+    if (!isValid || Point.isEqual(myPosition.start, point)) {
+      this.setState({
+        isDrawing: false,
+      });
+      return;
+    }
     const rect = new Rectangle(graphic);
-    rect.setPoints(myPosition.start, { x, y });
+    rect.setPoints(myPosition.start, point);
     this.addToShapeList(rect, {});
     this.setState(
       {
         isDrawing: false,
         myPosition: {
-          end: {
-            x,
-            y,
-          },
+          end: point,
         },
       },
       () => {
@@ -89,15 +93,24 @@ class PaintingBoard extends React.Component {
     );
   };
 
+  getValidViewPort = (event) => {
+    const [x, y] = this.getMousePosition(event);
+    return {
+      isValid: x >= 0 && y >= 0,
+      point: Point.toPoint([x, y]),
+    };
+  };
+
   getMousePosition = (event) => [event.clientX, event.clientY - 50];
 
   handleMouseMove = (event) => {
     const { graphic, myPosition, isDrawing } = this.state;
     if (isDrawing) {
       const { shapes } = this.props;
-      const [x, y] = this.getMousePosition(event);
+      const { isValid, point } = this.getValidViewPort(event);
+      if (!isValid) return;
       const rect = new Rectangle(graphic);
-      rect.setPoints(myPosition.start, { x, y });
+      rect.setPoints(myPosition.start, point);
       const shapeWithEnemy = [...shapes, { shape: rect, owner: {} }];
       this.drawCanvas(shapeWithEnemy);
     }
@@ -123,10 +136,23 @@ class PaintingBoard extends React.Component {
   };
 
   render() {
-    const { canvasWidth, canvasHeight } = this.state;
+    const { canvasWidth, canvasHeight, currentShapeType, currentShapeColor } = this.state;
     return (
       <StyledBoardContainer>
-        <Header />
+        <Header
+          shapeType={currentShapeType}
+          shapeColor={currentShapeColor}
+          onShapeChange={(value) =>
+            this.setState({
+              currentShapeType: value,
+            })
+          }
+          onColorChange={(value) =>
+            this.setState({
+              currentShapeColor: value,
+            })
+          }
+        />
         <canvas
           id="board"
           ref={(ref) => (this.canvasRef = ref)}

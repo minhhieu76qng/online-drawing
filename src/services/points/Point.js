@@ -4,6 +4,11 @@ export class Point {
 
   _y = 0;
 
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
   set x(value) {
     this._x = value;
   }
@@ -18,5 +23,13 @@ export class Point {
 
   get y() {
     return this._y;
+  }
+
+  static isEqual(p1, p2) {
+    return p1.x === p2.x && p1.y === p2.y;
+  }
+
+  static toPoint([x, y]) {
+    return new Point(x, y);
   }
 }

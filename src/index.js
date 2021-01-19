@@ -6,12 +6,12 @@ import { store } from 'services/redux/store';
 import App from './App';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <ReduxProvider store={store}>
-      <Router>
-        <App />
-      </Router>
-    </ReduxProvider>
-  </React.StrictMode>,
+  // <React.StrictMode>
+  <ReduxProvider store={store}>
+    <Router>
+      <App />
+    </Router>
+  </ReduxProvider>,
+  // </React.StrictMode>,
   document.getElementById('root'),
 );
