@@ -6,8 +6,9 @@ import { Rectangle } from 'services/shapes/Rectangle';
 import { Canvas } from 'services/graphics/Canvas';
 import Shape from 'services/shapes/Shape';
 import { SHAPE_TYPE } from 'constants/shapes';
-import { StyledBoardContainer } from './PaintingBoard.styled';
 import { Point } from 'services/points/Point';
+import { StyledBoardContainer } from './PaintingBoard.styled';
+import { ShapeFactory } from 'services/shapes/ShapeFactory';
 
 const HEADER_HEIGHT = 50;
 
@@ -57,6 +58,11 @@ class PaintingBoard extends React.Component {
     this.canvasRef.removeEventListener('mousemove', this.handleMouseMove);
   }
 
+  _getShapeClass = () => {
+    const { currentShapeType } = this.state;
+    return ShapeFactory.getShapeByName(currentShapeType);
+  };
+
   handleMouseDown = (event) => {
     const { isValid, point } = this.getValidViewPort(event);
     if (!isValid) return;
@@ -77,9 +83,10 @@ class PaintingBoard extends React.Component {
       });
       return;
     }
-    const rect = new Rectangle(graphic);
-    rect.setPoints(myPosition.start, point);
-    this.addToShapeList(rect, {});
+    const ShapeClass = this._getShapeClass();
+    const shape = new ShapeClass(graphic);
+    shape.setPoints(myPosition.start, point);
+    this.addToShapeList(shape, {});
     this.setState(
       {
         isDrawing: false,
@@ -109,9 +116,10 @@ class PaintingBoard extends React.Component {
       const { shapes } = this.props;
       const { isValid, point } = this.getValidViewPort(event);
       if (!isValid) return;
-      const rect = new Rectangle(graphic);
-      rect.setPoints(myPosition.start, point);
-      const shapeWithEnemy = [...shapes, { shape: rect, owner: {} }];
+      const ShapeClass = this._getShapeClass();
+      const shape = new ShapeClass(graphic);
+      shape.setPoints(myPosition.start, point);
+      const shapeWithEnemy = [...shapes, { shape, owner: {} }];
       this.drawCanvas(shapeWithEnemy);
     }
   };
