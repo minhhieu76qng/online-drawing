@@ -1,4 +1,3 @@
-import React from 'react';
 import LogoWithName from 'assets/images/logo-with-name.png';
 import { StyledContainer, StyledLogo } from './Loading.styled';
 

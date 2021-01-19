@@ -2,7 +2,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { routes } from './RouterConfig';
 
 function Router() {
-  const isSignIn = false;
+  const isSignIn = true;
 
   return (
     <Switch>
